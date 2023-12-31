@@ -14,6 +14,7 @@ import {
   ref,
   uploadBytesResumable,
   getDownloadURL,
+  signInWithEmailAndPassword,
 } from "./firebase.js";
 
 let userName = document.getElementById("signup-user-name");
@@ -21,15 +22,18 @@ let userEmail = document.getElementById("signup-email");
 let userPassword = document.getElementById("signup-password");
 let userImage = document.getElementById("file_input");
 let loader = document.getElementById("loader");
+let loginLoader = document.getElementById("login-loader");
 let signupBtn = document.getElementById("signup-btn");
 let mailFormat = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
 let passFormat = /^[A-Za-z]\w{7,14}$/;
-
-console.log(userEmail.value, userName.value, userPassword.value);
+let loginEmail = document.getElementById("login-email");
+let loginPassword = document.getElementById("login-password");
+let loginBtn = document.getElementById("login-btn");
+// console.log(userEmail.value, userName.value, userPassword.value);
 
 // Register User
 const signUp = () => {
-  if (!userName.value.trim()) { 
+  if (!userName.value.trim()) {
     const Toast = Swal.mixin({
       toast: true,
       position: "top-end",
@@ -90,8 +94,6 @@ const signUp = () => {
         const user = userCredential.user;
         console.log(user);
         dataToFirestore(user);
-
-        // ...
       })
       .catch((error) => {
         const errorCode = error.code;
@@ -108,7 +110,10 @@ signupBtn && signupBtn.addEventListener("click", signUp);
 
 let uploadFile = (file) => {
   return new Promise((resolve, reject) => {
-    const storageRef = ref(storage, `images/${userName.value.split(" ").join("-")}`);
+    const storageRef = ref(
+      storage,
+      `images/${userName.value.split(" ").join("-")}`
+    );
 
     const uploadTask = uploadBytesResumable(storageRef, file);
 
@@ -141,12 +146,19 @@ let uploadFile = (file) => {
 };
 // uploadFile()
 
+const uploadImage = async () => {
+  const file = document.getElementById("file_input");
+  const url = await uploadFile(file.files[0]);
+  console.log("url -->", url);
+};
+
 let dataToFirestore = async (user) => {
+  uploadImage();
   let userData = {
     name: userName.value,
     email: userEmail.value,
     password: userPassword.value,
-    iamge : await uploadFile()
+    iamge: await uploadFile(),
   };
   try {
     await setDoc(doc(db, "users", user.uid), {
@@ -173,6 +185,10 @@ let dataToFirestore = async (user) => {
     });
     loader.classList.toggle("hidden");
     signupBtn.disabled = false;
+    userName.value = "";
+    userEmail.value = "";
+    userPassword.value = "";
+    userImage.value = "";
   } catch (e) {
     console.error("Error adding document: ", e);
     const Toast = Swal.mixin({
@@ -190,5 +206,108 @@ let dataToFirestore = async (user) => {
       icon: "error",
       title: "An unknown error occurred",
     });
+    loader.classList.toggle("hidden");
+    signupBtn.disabled = false;
   }
 };
+
+// userImage.addEventListener("change", () => {
+//   // files = event.target.files[0]
+//   console.log(event.target.files[0]);
+//   console.log(URL.createObjectURL(event.target.files[0]));
+// });
+
+const login = () => {
+  if (!loginEmail.value.match(mailFormat)) {
+    // console.log("Incorrect Email");
+    const Toast = Swal.mixin({
+      toast: true,
+      position: "top-end",
+      showConfirmButton: false,
+      timer: 3000,
+      timerProgressBar: true,
+      didOpen: (toast) => {
+        toast.onmouseenter = Swal.stopTimer;
+        toast.onmouseleave = Swal.resumeTimer;
+      },
+    });
+    Toast.fire({
+      icon: "error",
+      title: "Enter correct Email Address",
+    });
+  } else if (!loginPassword.value.match(passFormat)) {
+    // console.log("Pass Format Not Correct");
+    const Toast = Swal.mixin({
+      toast: true,
+      position: "top-end",
+      showConfirmButton: false,
+      timer: 3000,
+      timerProgressBar: true,
+      didOpen: (toast) => {
+        toast.onmouseenter = Swal.stopTimer;
+        toast.onmouseleave = Swal.resumeTimer;
+      },
+    });
+    Toast.fire({
+      icon: "error",
+      title:
+        "Password must be greater than 6 charachters and must contains alphabets and number",
+    });
+  } else {
+    signInWithEmailAndPassword(auth, loginEmail.value, loginPassword.value)
+      .then((userCredential) => {
+        loginLoader.classList.toggle("hidden");
+        loginBtn.disabled = true;
+        // Signed in
+        const user = userCredential.user;
+        console.log(user);
+        const Toast = Swal.mixin({
+          toast: true,
+          position: "top-end",
+          showConfirmButton: false,
+          timer: 3000,
+          timerProgressBar: true,
+          didOpen: (toast) => {
+            toast.onmouseenter = Swal.stopTimer;
+            toast.onmouseleave = Swal.resumeTimer;
+          },
+        });
+        Toast.fire({
+          icon: "success",
+          title: "Logged in successfully",
+        });
+        loginEmail.value = "";
+        loginPassword.value = "";
+          loginLoader.classList.toggle("hidden");
+          loginBtn.disabled = false;
+
+        // ...
+      })
+      .catch((error) => {
+        loginLoader.classList.toggle("hidden");
+        loginBtn.disabled = true;
+        const errorCode = error.code;
+        const errorMessage = error.message;
+        console.log(errorMessage);
+        const Toast = Swal.mixin({
+          toast: true,
+          position: "top-end",
+          showConfirmButton: false,
+          timer: 3000,
+          timerProgressBar: true,
+          didOpen: (toast) => {
+            toast.onmouseenter = Swal.stopTimer;
+            toast.onmouseleave = Swal.resumeTimer;
+          },
+        });
+        Toast.fire({
+          icon: "error",
+          title: "Invalid Email or Password",
+        });
+        loginLoader.classList.toggle("hidden");
+        loginBtn.disabled = false;
+      });
+  }
+};
+
+loginBtn && loginBtn.addEventListener("click", login);
