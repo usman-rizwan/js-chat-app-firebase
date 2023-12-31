@@ -1,12 +1,16 @@
-
-// }
-
 // Import the functions you need from the SDKs you need
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+
+///////////////////////////Authentication//////////////////////////////
 import {
   getAuth,
-  createUserWithEmailAndPassword,signInWithEmailAndPassword,
+  createUserWithEmailAndPassword,
+  signInWithEmailAndPassword,
+  onAuthStateChanged,
+  signOut,
 } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+
+///////////////////////////// Firestore  ///////////////////////////////
 import {
   collection,
   getDocs,
@@ -14,7 +18,11 @@ import {
   addDoc,
   setDoc,
   doc,
+  getDoc,
+ 
 } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+
+///////////////////////////// Storage  ///////////////////////////////
 import {
   getStorage,
   ref,
@@ -52,4 +60,7 @@ export {
   uploadBytesResumable,
   getDownloadURL,
   signInWithEmailAndPassword,
+  onAuthStateChanged,
+  getDoc,
+  signOut,
 };

@@ -15,6 +15,9 @@ import {
   uploadBytesResumable,
   getDownloadURL,
   signInWithEmailAndPassword,
+  onAuthStateChanged,
+  getDoc,
+  signOut,
 } from "./firebase.js";
 
 let userName = document.getElementById("signup-user-name");
@@ -29,6 +32,11 @@ let passFormat = /^[A-Za-z]\w{7,14}$/;
 let loginEmail = document.getElementById("login-email");
 let loginPassword = document.getElementById("login-password");
 let loginBtn = document.getElementById("login-btn");
+let logoutBtn = document.getElementById("logout-btn");
+let userProfileImage = document.getElementById("user-profile-image");
+let userProfileName = document.getElementById("user-profile-name");
+let userProfileEmail = document.getElementById("user-profile-email");
+let userProfileId = document.getElementById("user-profile-id");
 // console.log(userEmail.value, userName.value, userPassword.value);
 
 // Register User
@@ -150,6 +158,7 @@ const uploadImage = async () => {
   const file = document.getElementById("file_input");
   const url = await uploadFile(file.files[0]);
   console.log("url -->", url);
+  return url;
 };
 
 let dataToFirestore = async (user) => {
@@ -158,7 +167,7 @@ let dataToFirestore = async (user) => {
     name: userName.value,
     email: userEmail.value,
     password: userPassword.value,
-    iamge: await uploadFile(),
+    image: await uploadFile(),
   };
   try {
     await setDoc(doc(db, "users", user.uid), {
@@ -278,8 +287,8 @@ const login = () => {
         });
         loginEmail.value = "";
         loginPassword.value = "";
-          loginLoader.classList.toggle("hidden");
-          loginBtn.disabled = false;
+        loginLoader.classList.toggle("hidden");
+        loginBtn.disabled = false;
 
         // ...
       })
@@ -311,3 +320,58 @@ const login = () => {
 };
 
 loginBtn && loginBtn.addEventListener("click", login);
+
+onAuthStateChanged(auth, async (user) => {
+  if (user) {
+    const uid = user.uid;
+    const docRef = doc(db, "users", uid);
+    const docSnap = await getDoc(docRef);
+    console.log(docSnap);
+
+    if (docSnap.exists()) {
+      console.log("Document data:", docSnap.data());
+      if (location.pathname !== "/profile.html") {
+        window.location = "/profile.html";
+      }
+      userProfileEmail.innerHTML = docSnap.data().email;
+      userProfileName.innerHTML = docSnap.data().name;
+      userProfileId.innerHTML = `User Id: ${docSnap.data().id} `;
+      userProfileImage.src = docSnap.data().image;
+    } else {
+      console.log("No such document!");
+      if (
+        location.pathname !== "/login.html" &&
+        location.pathname !== "/signup.html"
+      ) {
+        window.location = "/signup.html";
+      }
+      // docSnap.data() will be undefined in this case
+    }
+    // ...
+  } else {
+    // User is signed out
+    console.log("not logged in");
+    if (
+      location.pathname !== "/login.html" &&
+      location.pathname !== "/signup.html"
+    ) {
+      window.location = "/signup.html";
+    }
+  }
+});
+
+let logOutUser = () => {
+  signOut(auth)
+    .then(() => {
+     // localStorage.clear();
+      console.log("Log out Successfully");
+      window.location = "/login.html";
+    })
+    .catch((error) => {
+      console.log(error);
+      // An error happened.
+    });
+};
+
+
+logoutBtn && logoutBtn.addEventListener("click", logOutUser);
