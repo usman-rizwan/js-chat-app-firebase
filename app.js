@@ -330,13 +330,16 @@ onAuthStateChanged(auth, async (user) => {
 
     if (docSnap.exists()) {
       console.log("Document data:", docSnap.data());
-      if (location.pathname !== "/profile.html") {
-        window.location = "/profile.html";
+      if (location.pathname !== "/profile.html" && location.pathname !=="/index.html") {
+        window.location =  "/profile.html" ||  "/index.html"  ;
       }
-      userProfileEmail.innerHTML = docSnap.data().email;
-      userProfileName.innerHTML = docSnap.data().name;
-      userProfileId.innerHTML = `User Id: ${docSnap.data().id} `;
-      userProfileImage.src = docSnap.data().image;
+      if (userEmail || userProfileEmail || userProfileId || userProfileImage) {
+        
+        userProfileName.innerHTML = docSnap.data().name;
+        userProfileEmail.innerHTML = docSnap.data().email;
+        userProfileId.innerHTML = `User Id: ${docSnap.data().id} `;
+        userProfileImage.src = docSnap.data().image;
+      }
     } else {
       console.log("No such document!");
       if (
@@ -375,3 +378,5 @@ let logOutUser = () => {
 
 
 logoutBtn && logoutBtn.addEventListener("click", logOutUser);
+
+
