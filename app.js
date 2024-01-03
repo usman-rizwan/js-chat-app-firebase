@@ -1,5 +1,3 @@
-
-
 import {
   auth,
   getAuth,
@@ -18,6 +16,9 @@ import {
   onAuthStateChanged,
   getDoc,
   signOut,
+  query,
+  where,
+  getDocs,
 } from "./firebase.js";
 
 let userName = document.getElementById("signup-user-name");
@@ -37,6 +38,10 @@ let userProfileImage = document.getElementById("user-profile-image");
 let userProfileName = document.getElementById("user-profile-name");
 let userProfileEmail = document.getElementById("user-profile-email");
 let userProfileId = document.getElementById("user-profile-id");
+let msgUserName = document.getElementById("message-user-name");
+let msgUserImage = document.getElementById("message-user-image");
+let allUsers = document.getElementById("all-users");
+
 // console.log(userEmail.value, userName.value, userPassword.value);
 
 // Register User
@@ -109,6 +114,7 @@ const signUp = () => {
         console.log(errorMessage);
         loader.classList.toggle("hidden");
         signupBtn.disabled = false;
+     
         // ..
       });
   }
@@ -152,22 +158,22 @@ let uploadFile = (file) => {
     );
   });
 };
-// uploadFile()
+
 
 const uploadImage = async () => {
-  const file = document.getElementById("file_input");
-  const url = await uploadFile(file.files[0]);
+  const fileInput = document.getElementById("file_input");
+  const url = await uploadFile(fileInput.files[0]);
   console.log("url -->", url);
   return url;
 };
 
 let dataToFirestore = async (user) => {
-  uploadImage();
+   const imageUrl = await uploadImage(); // Get the image URL
   let userData = {
     name: userName.value,
     email: userEmail.value,
     password: userPassword.value,
-    image: await uploadFile(),
+    image: imageUrl,
   };
   try {
     await setDoc(doc(db, "users", user.uid), {
@@ -177,6 +183,7 @@ let dataToFirestore = async (user) => {
     console.log(
       `Document written with ID: ${user.uid} user name -- > ${userData.name}`
     );
+    window.location = "/profile.html"
     const Toast = Swal.mixin({
       toast: true,
       position: "top-end",
@@ -198,6 +205,7 @@ let dataToFirestore = async (user) => {
     userEmail.value = "";
     userPassword.value = "";
     userImage.value = "";
+    // window.location = "./profile.html";
   } catch (e) {
     console.error("Error adding document: ", e);
     const Toast = Swal.mixin({
@@ -324,17 +332,22 @@ loginBtn && loginBtn.addEventListener("click", login);
 onAuthStateChanged(auth, async (user) => {
   if (user) {
     const uid = user.uid;
+
     const docRef = doc(db, "users", uid);
     const docSnap = await getDoc(docRef);
+    getUser(uid);
+    getAllUsers(user.email);
     console.log(docSnap);
 
     if (docSnap.exists()) {
       console.log("Document data:", docSnap.data());
-      if (location.pathname !== "/profile.html" && location.pathname !=="/index.html") {
-        window.location =  "/profile.html" ||  "/index.html"  ;
+      if (
+        location.pathname !== "/profile.html" &&
+        location.pathname !== "/index.html"
+      ) {
+        window.location = "/profile.html" ;
       }
       if (userEmail || userProfileEmail || userProfileId || userProfileImage) {
-        
         userProfileName.innerHTML = docSnap.data().name;
         userProfileEmail.innerHTML = docSnap.data().email;
         userProfileId.innerHTML = `User Id: ${docSnap.data().id} `;
@@ -366,7 +379,7 @@ onAuthStateChanged(auth, async (user) => {
 let logOutUser = () => {
   signOut(auth)
     .then(() => {
-     // localStorage.clear();
+      // localStorage.clear();
       console.log("Log out Successfully");
       window.location = "/login.html";
     })
@@ -376,7 +389,48 @@ let logOutUser = () => {
     });
 };
 
-
 logoutBtn && logoutBtn.addEventListener("click", logOutUser);
 
+const getUser = async (id) => {
+  // let id = auth.currentUser.uid;
+  // console.log("0",id);
+  const docRef = doc(db, "users", id);
+  const docSnap = await getDoc(docRef);
 
+  if (docSnap.exists()) {
+    console.log("User Data --->:", docSnap.data());
+    if (msgUserImage || msgUserName) {
+      msgUserName.innerHTML = docSnap.data().name;
+      msgUserImage.src = docSnap.data().image;
+    }
+  } else {
+    // docSnap.data() will be undefined in this case
+    console.log("No such document!");
+  }
+};
+
+const getAllUsers = async (email) => {
+  console.log("email", email);
+  const q = query(collection(db, "users"), where("email", "!=", email));
+
+  const querySnapshot = await getDocs(q);
+  querySnapshot.forEach((doc) => {
+    // doc.data() is never undefined for query doc snapshots
+    console.log(doc.id, " => ", doc.data());
+    if (allUsers) {
+      allUsers.innerHTML += ` <div
+    class="block max-w-sm p-2 m-2  bg-white border border-gray-200 rounded-lg shadow hover:bg-gray-100 dark:bg-gray-800 dark:border-gray-700 dark:hover:bg-gray-700">
+
+    <h5 class="mb-2 text-2xl font-bold tracking-tight text-gray-900 dark:text-white capitalize" >${
+      doc.data().name
+    }</h5>
+    <p class="font-normal text-gray-700 dark:text-gray-400" >${
+      doc.data().email
+    }</p>
+  </div>`;
+    }
+  });
+};
+// let userChatId = "";
+// let senderID = "";
+// let showMessage = document.getElementById("message-show");

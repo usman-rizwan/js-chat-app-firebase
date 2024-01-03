@@ -20,17 +20,43 @@
       <span class="sr-only">Loading...</span>
     </div>
   </div>
-  <!-- This is an example component -->
- 
+  <nav class="relative select-none bg-green-800 lg:flex lg:items-stretch w-full">
+    <div class="flex flex-no-shrink items-stretch h-12">
+      <button class="block lg:hidden cursor-pointer ml-auto relative w-12 h-12 p-4">
+        <svg class="fill-current text-white" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
+          <path d="M0 3h20v2H0V3zm0 6h20v2H0V9zm0 6h20v2H0v-2z" />
+        </svg>
+        <svg class="fill-current text-white" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
+          <path
+            d="M10 8.586L2.929 1.515 1.515 2.929 8.586 10l-7.071 7.071 1.414 1.414L10 11.414l7.071 7.071 1.414-1.414L11.414 10l7.071-7.071-1.414-1.414L10 8.586z" />
+        </svg>
+      </button>
+    </div>
+    <div class="lg:flex lg:items-stretch lg:flex-no-shrink lg:flex-grow">
+      <div class="lg:flex lg:items-stretch lg:justify-end ml-auto">
+        <div
+          class="flex-no-grow flex-no-shrink relative py-2 px-4 leading-normal text-white no-underline flex items-center hover:bg-grey-dark text-xl">
+          Chat</div>
+      </div>
+      <div class="lg:flex lg:items-stretch lg:justify-end ml-auto">
+        <a href="./profile.html"
+          class="flex-no-grow flex-no-shrink relative py-2 px-4 leading-normal text-white no-underline flex items-center hover:bg-grey-dark"><span
+            class="bg-white text-green-800 font-medium  rounded   p-2">Back to profile</span></a>
+      </div>
+    </div>
+
+    </div>
+  </nav>
+
+
   <div class="container mx-auto shadow-lg rounded-lg">
-    <!-- headaer -->
-    <div class="px-5 py-5 flex justify-between items-center bg-white border-b-2">
-      <div id="message-user-name" class="font-semibold text-2xl">GoingChat</div>
+    <!-- header -->
+    <div class="px-5 py-5 flex justify-between items-center bg-white border-b-2 ">
+      <div id="message-user-name" class="font-semibold text-2xl capitalize ">Loading <span class="animate-ping text-md">...</span></div>
       <div class="w-1/2">
       </div>
-      <div
-        class="h-12 w-12 p-2 bg-yellow-500 rounded-full text-white font-semibold flex items-center justify-center">
-        <img id="message-user-image" src="" alt="">
+      <div class="h-16 w-16 p-2  text-white font-semibold flex items-center justify-center object-cover ">
+        <img id="message-user-image" class="rounded-full"  src="https://media1.giphy.com/media/3oEjI6SIIHBdRxXI40/200w.gif?cid=6c09b952kqaz9oyscryqv4hzi7gj3yetccv96vuqesw5af73&ep=v1_gifs_search&rid=200w.gif&ct=g" alt="">
       </div>
     </div>
     <!-- end header -->
@@ -40,9 +66,18 @@
       <div id="user-add" class="flex flex-col w-2/5 border-r-2 overflow-y-auto">
         <!-- search compt -->
         <div class="border-b-2 py-4 px-2">
-          <input type="text" placeholder="search "
-            class="py-2 px-2 border-2 border-gray-200 rounded-2xl w-full" />
+          <div>
+            <label for="first_name" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white " >Search</label>
+            <input type="text" id="disabled-input" aria-label="disabled input" class="mb-6 bg-gray-100 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 cursor-not-allowed dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-gray-400 dark:focus:ring-blue-500 dark:focus:border-blue-500"  disabled>
+
+          </div>
         </div>
+
+        <div class="border-b-2 py-4 px-2" id="all-users">
+         
+        
+        </div>
+
 
         <!-- end user list -->
       </div>
@@ -52,23 +87,29 @@
         <div class="flex flex-col mt-5">
           <!-- ============================ navbar profile ================= -->
           <div class="px-5 py-5 flex justify-between items-center bg-white border-b-2">
-            <div id="navbar-name" class="font-semibold text-2xl">GoingChat</div>
+            <div id="user-name-navbar" class="font-semibold text-2xl">GoingChat</div>
             <div class="w-1/2">
             </div>
             <div
               class="h-12 w-12 p-2 bg-yellow-500 rounded-full text-white font-semibold flex items-center justify-center">
-              <img id="navbar-image" src="" alt="">
+              <img id="user-image-navbar" src="" alt="">
             </div>
           </div>
           <!--================ messages show =================-->
-            <div id="message-show">
-             
-            </div>
+          <div id="message-show">
+
+          </div>
         </div>
         <div class="py-5">
-          <!-- message send input -->
-          <input id="message-input" class="w-full bg-gray-300 py-5 px-3 rounded-xl" type="text"
-            placeholder="type your message here..." />
+          <div class="relative mb-6">
+            <div class="absolute inset-y-0 start-0 flex items-center ps-3.5 pointer-events-none">
+              <svg class="w-4 h-4 text-gray-500 dark:text-gray-400" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 20 16">
+                  <path d="m10.036 8.278 9.258-7.79A1.979 1.979 0 0 0 18 0H2A1.987 1.987 0 0 0 .641.541l9.395 7.737Z"/>
+                  <path d="M11.241 9.817c-.36.275-.801.425-1.255.427-.428 0-.845-.138-1.187-.395L0 2.6V14a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V2.5l-8.759 7.317Z"/>
+              </svg>
+            </div>
+            <input type="text" id="input-group-1" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 block w-full ps-10 p-2.5  dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 focus:border-green-300" placeholder="Type your message here...">
+          </div>
         </div>
       </div>
 
@@ -78,4 +119,3 @@
 </body>
 
 </html>
-
