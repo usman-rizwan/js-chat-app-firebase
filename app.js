@@ -21,6 +21,7 @@ import {
   getDocs,
   serverTimestamp,
   onSnapshot,
+  orderBy
 } from "./firebase.js";
 
 let userName = document.getElementById("signup-user-name");
@@ -46,6 +47,7 @@ let allUsers = document.getElementById("all-users");
 let selectedUserName = document.getElementById("selected-user-name");
 let selectedUserEmail = document.getElementById("selected-user-email");
 let selectedUserImage = document.getElementById("selected-user-image");
+let userChatBox = document.getElementById("user-chat-box");
 
 // console.log(userEmail.value, userName.value, userPassword.value);
 
@@ -404,7 +406,7 @@ const getUser = async (id) => {
   if (docSnap.exists()) {
     console.log("User Data --->:", docSnap.data());
     if (msgUserImage || msgUserName) {
-      msgUserName.innerHTML = docSnap.data().name;
+      msgUserName.innerHTML = `${docSnap.data().name} (You)`;
       msgUserImage.src = docSnap.data().image;
     }
   } else {
@@ -426,7 +428,7 @@ const getAllUsers = async (email) => {
       allUsers.innerHTML += ` <div onclick="selectedUserChat('${name}','${email}','${image}','${doc.id}')"
     class="block max-w-sm p-2 m-2  bg-white border border-gray-200 rounded-lg shadow hover:bg-gray-100 dark:bg-gray-800 dark:border-gray-700 dark:hover:bg-gray-700">
 
-    <h5 class="mb-2 text-2xl font-bold tracking-tight text-gray-900 dark:text-white capitalize" >${name}</h5>
+    <h5 class="mb-2 text-2xl font-bold tracking-tight text-gray-900 dark:text-white capitalize" >${name} </h5>
     <p class="font-normal text-gray-700 dark:text-gray-400" >${email}</p>
   </div>`;
     }
@@ -473,8 +475,8 @@ messageInput &&
           message: messageInput.value,
           chatId: chatId,
           timestamp: serverTimestamp(),
-          senderId :currentUserUid,
-          receiverId :selectedUserId
+          senderId: currentUserUid,
+          receiverId: selectedUserId,
         });
         console.log("Document written with ID: ", docRef.id);
         console.log("Message sent ");
@@ -486,12 +488,32 @@ messageInput &&
   });
 
 const getAllChats = (chatId) => {
-  const q = query(collection(db, "messages"), where("chatId", "==", chatId));
+  let currentUser = auth.currentUser.uid;
+  // console.log("currentUser", currentUser);
+  const q = query(collection(db, "messages"), orderBy("timestamp"), where("chatId", "==", chatId));
   const unsubscribe = onSnapshot(q, (querySnapshot) => {
     const messages = [];
     querySnapshot.forEach((doc) => {
       messages.push(doc.data());
     });
+    userChatBox.innerHTML = "";
+    for (let i = 0; i < messages.length; i++) {
+      if (currentUser == messages[i].senderId) {
+        userChatBox.innerHTML += ` <div class="flex justify-end mb-4">
+        <div class="bg-green-400 text-white p-4 rounded-tr-lg rounded-tl-lg rounded-bl-lg">
+           ${messages[i].message}
+        </div>
+    </div>
+    
+    `;
+      } else {
+        userChatBox.innerHTML += ` <div class="flex mb-4">
+        <div class="bg-gray-200 p-4 rounded-tr-lg rounded-tl-lg rounded-br-lg">
+        ${messages[i].message}
+        </div>
+    </div>`;
+      }
+    }
     console.log("messages", messages);
   });
 };
