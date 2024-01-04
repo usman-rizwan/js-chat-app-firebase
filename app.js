@@ -519,7 +519,4 @@ const getAllChats = (chatId) => {
   });
 };
 
-// let userChatId = "";
-// let senderID = "";
-// let showMessage = document.getElementById("message-show");
-// XdpInLoTEgXXavjPu3EqHxKY0kG3wGc7rWu27XNEi5Az8ZGnjG1dnXI2
+
