@@ -1,3 +1,6 @@
+
+
+import { data } from "browserslist";
 import {
   auth,
   getAuth,
@@ -19,6 +22,8 @@ import {
   query,
   where,
   getDocs,
+  serverTimestamp,
+  onSnapshot,
 } from "./firebase.js";
 
 let userName = document.getElementById("signup-user-name");
@@ -41,6 +46,9 @@ let userProfileId = document.getElementById("user-profile-id");
 let msgUserName = document.getElementById("message-user-name");
 let msgUserImage = document.getElementById("message-user-image");
 let allUsers = document.getElementById("all-users");
+let selectedUserName = document.getElementById("selected-user-name");
+let selectedUserEmail = document.getElementById("selected-user-email");
+let selectedUserImage = document.getElementById("selected-user-image");
 
 // console.log(userEmail.value, userName.value, userPassword.value);
 
@@ -114,7 +122,7 @@ const signUp = () => {
         console.log(errorMessage);
         loader.classList.toggle("hidden");
         signupBtn.disabled = false;
-     
+
         // ..
       });
   }
@@ -159,7 +167,6 @@ let uploadFile = (file) => {
   });
 };
 
-
 const uploadImage = async () => {
   const fileInput = document.getElementById("file_input");
   const url = await uploadFile(fileInput.files[0]);
@@ -168,7 +175,7 @@ const uploadImage = async () => {
 };
 
 let dataToFirestore = async (user) => {
-   const imageUrl = await uploadImage(); // Get the image URL
+  const imageUrl = await uploadImage(); // Get the image URL
   let userData = {
     name: userName.value,
     email: userEmail.value,
@@ -183,7 +190,7 @@ let dataToFirestore = async (user) => {
     console.log(
       `Document written with ID: ${user.uid} user name -- > ${userData.name}`
     );
-    window.location = "/profile.html"
+    window.location = "/profile.html";
     const Toast = Swal.mixin({
       toast: true,
       position: "top-end",
@@ -345,7 +352,7 @@ onAuthStateChanged(auth, async (user) => {
         location.pathname !== "/profile.html" &&
         location.pathname !== "/index.html"
       ) {
-        window.location = "/profile.html" ;
+        window.location = "/profile.html";
       }
       if (userEmail || userProfileEmail || userProfileId || userProfileImage) {
         userProfileName.innerHTML = docSnap.data().name;
@@ -416,21 +423,83 @@ const getAllUsers = async (email) => {
   const querySnapshot = await getDocs(q);
   querySnapshot.forEach((doc) => {
     // doc.data() is never undefined for query doc snapshots
-    console.log(doc.id, " => ", doc.data());
+    // console.log(doc.id, " => ", doc.data());
+    let { name, email, image } = doc.data();
     if (allUsers) {
-      allUsers.innerHTML += ` <div
+      allUsers.innerHTML += ` <div onclick="selectedUserChat('${name}','${email}','${image}','${doc.id}')"
     class="block max-w-sm p-2 m-2  bg-white border border-gray-200 rounded-lg shadow hover:bg-gray-100 dark:bg-gray-800 dark:border-gray-700 dark:hover:bg-gray-700">
 
-    <h5 class="mb-2 text-2xl font-bold tracking-tight text-gray-900 dark:text-white capitalize" >${
-      doc.data().name
-    }</h5>
-    <p class="font-normal text-gray-700 dark:text-gray-400" >${
-      doc.data().email
-    }</p>
+    <h5 class="mb-2 text-2xl font-bold tracking-tight text-gray-900 dark:text-white capitalize" >${name}</h5>
+    <p class="font-normal text-gray-700 dark:text-gray-400" >${email}</p>
   </div>`;
     }
   });
 };
+
+let selectedUserId;
+const selectedUserChat = (name, email, image, uid) => {
+  selectedUserId = uid;
+  let currentUserUid = auth.currentUser.uid;
+  let chatId;
+  if (selectedUserName || selectedUserEmail || selectedUserImage) {
+    selectedUserName.innerHTML = name;
+    selectedUserEmail.innerHTML = email;
+    selectedUserImage.src = image;
+  }
+  if (currentUserUid < selectedUserId) {
+    chatId = currentUserUid + selectedUserId;
+  } else {
+    chatId = selectedUserId + currentUserUid;
+  }
+  console.log(chatId);
+  getAllChats(chatId);
+};
+
+window.selectedUserChat = selectedUserChat;
+
+const messageInput = document.getElementById("message-input");
+messageInput &&
+  messageInput.addEventListener("keydown", async () => {
+    let currentUserUid = auth.currentUser.uid;
+    let chatId;
+    if (event.keyCode == "13") {
+      console.log(selectedUserId, currentUserUid);
+
+      if (currentUserUid < selectedUserId) {
+        chatId = currentUserUid + selectedUserId;
+      } else {
+        chatId = selectedUserId + currentUserUid;
+      }
+      console.log(chatId);
+      try {
+        const docRef = await addDoc(collection(db, "messages"), {
+          message: messageInput.value,
+          chatId: chatId,
+          timestamp: serverTimestamp(),
+          senderId :currentUserUid,
+          receiverId :selectedUserId
+        });
+        console.log("Document written with ID: ", docRef.id);
+        console.log("Message sent ");
+        messageInput.value = "";
+      } catch (error) {
+        console.log(error);
+      }
+    }
+  });
+
+const getAllChats = (chatId) => {
+  const q = query(collection(db, "messages"), where("chatId", "==", chatId));
+  const unsubscribe = onSnapshot(q, (querySnapshot) => {
+    const messages = [];
+    querySnapshot.forEach((doc) => {
+      messages.push(doc.data());
+    });
+    console.log("messages", messages);
+  });
+};
+
 // let userChatId = "";
 // let senderID = "";
 // let showMessage = document.getElementById("message-show");
+// XdpInLoTEgXXavjPu3EqHxKY0kG3wGc7rWu27XNEi5Az8ZGnjG1dnXI2

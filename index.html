@@ -5,14 +5,16 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Chat App </title>
+      <!-- Font Awesome -->
+      <link
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
+      rel="stylesheet"
+      />
   <link rel="stylesheet" href="./style.css">
 </head>
 
 <body>
-  <!-- component -->
-  <!-- ========================================================== -->
-  <!-- ========================== LOADER ======================== -->
-  <!-- ========================================================== -->
+
   <div id="loader" class="hidden">
     <div
       class="animate-spin fixed left-[50%] top-[45%] inline-block w-10 h-10 border-[3px] border-current border-t-transparent text-pink-600 rounded-full"
@@ -36,12 +38,12 @@
       <div class="lg:flex lg:items-stretch lg:justify-end ml-auto">
         <div
           class="flex-no-grow flex-no-shrink relative py-2 px-4 leading-normal text-white no-underline flex items-center hover:bg-grey-dark text-xl">
-          Chat</div>
+          Chat </div>
       </div>
       <div class="lg:flex lg:items-stretch lg:justify-end ml-auto">
         <a href="./profile.html"
           class="flex-no-grow flex-no-shrink relative py-2 px-4 leading-normal text-white no-underline flex items-center hover:bg-grey-dark"><span
-            class="bg-white text-green-800 font-medium  rounded   p-2">Back to profile</span></a>
+            class="bg-white text-green-800 font-medium  rounded   p-2"><i class="fa-solid fa-circle-chevron-left"></i> Back to profile</span></a>
       </div>
     </div>
 
@@ -60,11 +62,10 @@
       </div>
     </div>
     <!-- end header -->
-    <!-- Chatting -->
     <div class="flex flex-row justify-between bg-white">
       <!-- chat list -->
       <div id="user-add" class="flex flex-col w-2/5 border-r-2 overflow-y-auto">
-        <!-- search compt -->
+      <!-- Search Bar -->
         <div class="border-b-2 py-4 px-2">
           <div>
             <label for="first_name" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white " >Search</label>
@@ -79,23 +80,24 @@
         </div>
 
 
-        <!-- end user list -->
       </div>
-      <!-- end chat list -->
-      <!-- message -->
+  
       <div class="w-full px-5 flex flex-col justify-between">
         <div class="flex flex-col mt-5">
-          <!-- ============================ navbar profile ================= -->
+          <!-- ============================ Navbar Profile ================= -->
           <div class="px-5 py-5 flex justify-between items-center bg-white border-b-2">
-            <div id="user-name-navbar" class="font-semibold text-2xl">GoingChat</div>
+            <div
+              class="h-16 w-16 p-2   text-white font-semibold flex items-center justify-center">
+              <img id="selected-user-image" class="rounded-full" src="" alt="">
+            </div>
             <div class="w-1/2">
             </div>
-            <div
-              class="h-12 w-12 p-2 bg-yellow-500 rounded-full text-white font-semibold flex items-center justify-center">
-              <img id="user-image-navbar" src="" alt="">
-            </div>
+            <div>
+            <div id="selected-user-name" class="font-semibold text-2xl capitalize">Loading <span class="animate-pulse">...</span> </div>
+            <div id="selected-user-email" class="font-semibold text-xl"></div>
           </div>
-          <!--================ messages show =================-->
+          </div>
+          <!--================ User messages =================-->
           <div id="message-show">
 
           </div>
@@ -108,7 +110,7 @@
                   <path d="M11.241 9.817c-.36.275-.801.425-1.255.427-.428 0-.845-.138-1.187-.395L0 2.6V14a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V2.5l-8.759 7.317Z"/>
               </svg>
             </div>
-            <input type="text" id="input-group-1" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 block w-full ps-10 p-2.5  dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 focus:border-green-300" placeholder="Type your message here...">
+            <input type="text" id="message-input" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 block w-full ps-10 p-2.5  dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 focus:border-green-300" placeholder="Type your message here...">
           </div>
         </div>
       </div>

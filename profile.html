@@ -3,7 +3,12 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Profile App</title>
+    <title>Profile page</title>
+      <!-- Font Awesome -->
+<link
+href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
+rel="stylesheet"
+/>
     <link rel="stylesheet" href="./style.css" />
   </head>
   <body>
@@ -37,16 +42,11 @@
           <a
             href="./index.html"
             class="flex-no-grow flex-no-shrink relative py-2 px-4 leading-normal text-white no-underline flex items-center hover:bg-grey-dark"
-            ><span class="bg-white text-green-800 font-medium  rounded   p-2">Chat Now</span></a
+            ><span class="bg-white text-green-800 font-medium  rounded   p-2"><i class="fa-solid fa-message"></i> Chat Now</span></a
           >
         </div>
       </div>
     </nav>
-    <!--=================================********** loader ****************============================= -->
-    <!-- component -->
-    <!-- ========================================================== -->
-    <!-- ========================== LOADER ======================== -->
-    <!-- ========================================================== -->
     <div id="loader" class="hidden">
       <div
         class="animate-spin fixed left-[50%] top-[45%] inline-block w-10 h-10 border-[3px] border-current border-t-transparent text-pink-600 rounded-full"
@@ -56,7 +56,7 @@
         <span class="sr-only">Loading...</span>
       </div>
     </div>
-    <!-- component -->
+
 
     <div
       class="flex justify-center items-center h-screen w-fll fixed left-[50%]"
@@ -115,7 +115,8 @@
           class="inline-block w-full py-4 px-6 mb-6 text-center text-lg leading-6 text-white font-bold bg-green-800 hover:bg-green-900 border-3 border-indigo-900 shadow rounded transition duration-200"
           id="logout-btn"
         >
-          Logout
+        Logout
+        <i class="fa-solid fa-arrow-right-from-bracket"></i>
         </button>
       </div>
     </div>
