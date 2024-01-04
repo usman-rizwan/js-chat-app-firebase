@@ -1,3 +1,4 @@
+
 import {
   auth,
   getAuth,
@@ -346,7 +347,7 @@ onAuthStateChanged(auth, async (user) => {
     console.log(docSnap);
 
     if (docSnap.exists()) {
-      console.log("Document data:", docSnap.data());
+      // console.log("Document data:", docSnap.data());
       if (
         location.pathname !== "/profile.html" &&
         location.pathname !== "/index.html"
@@ -404,7 +405,7 @@ const getUser = async (id) => {
   const docSnap = await getDoc(docRef);
 
   if (docSnap.exists()) {
-    console.log("User Data --->:", docSnap.data());
+    // console.log("User Data --->:", docSnap.data());
     if (msgUserImage || msgUserName) {
       msgUserName.innerHTML = `${docSnap.data().name} (You)`;
       msgUserImage.src = docSnap.data().image;
@@ -450,7 +451,7 @@ const selectedUserChat = (name, email, image, uid) => {
   } else {
     chatId = selectedUserId + currentUserUid;
   }
-  console.log(chatId);
+  // console.log(chatId);
   getAllChats(chatId);
 };
 
@@ -462,7 +463,7 @@ messageInput &&
     let currentUserUid = auth.currentUser.uid;
     let chatId;
     if (event.keyCode == "13") {
-      console.log(selectedUserId, currentUserUid);
+      // console.log(selectedUserId, currentUserUid);
 
       if (currentUserUid < selectedUserId) {
         chatId = currentUserUid + selectedUserId;
@@ -514,7 +515,7 @@ const getAllChats = (chatId) => {
     </div>`;
       }
     }
-    console.log("messages", messages);
+    // console.log("messages", messages);
   });
 };
 
