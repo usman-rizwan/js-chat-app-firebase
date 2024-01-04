@@ -1,6 +1,3 @@
-
-
-import { data } from "browserslist";
 import {
   auth,
   getAuth,
