@@ -426,8 +426,9 @@ const getAllUsers = async (email) => {
     // console.log(doc.id, " => ", doc.data());
     let { name, email, image } = doc.data();
     if (allUsers) {
-      allUsers.innerHTML += ` <div onclick="selectedUserChat('${name}','${email}','${image}','${doc.id}')"
-    class="block max-w-sm p-2 m-2  bg-white border border-gray-200 rounded-lg shadow hover:bg-gray-100 dark:bg-gray-800 dark:border-gray-700 dark:hover:bg-gray-700">
+      allUsers.innerHTML += `
+    <div onclick="selectedUserChat('${name}','${email}','${image}','${doc.id}')"
+    class="block max-w-sm p-2 m-2  bg-white border border-gray-200 rounded-lg shadow hover:bg-gray-100 cursor-pointer dark:bg-gray-800 dark:border-gray-700 dark:hover:bg-gray-700">
 
     <h5 class="mb-2 text-2xl font-bold tracking-tight text-gray-900 dark:text-white capitalize" >${name} </h5>
     <p class="font-normal text-gray-700 dark:text-gray-400" >${email}</p>
@@ -500,7 +501,8 @@ const getAllChats = (chatId) => {
     userChatBox.innerHTML = "";
     for (let i = 0; i < messages.length; i++) {
       if (currentUser == messages[i].senderId) {
-        userChatBox.innerHTML += ` <div class="flex justify-end mb-4">
+        userChatBox.innerHTML += `
+      <div class="flex justify-end mb-4">
         <div class="bg-green-400 text-white p-4 rounded-tr-lg rounded-tl-lg rounded-bl-lg">
            ${messages[i].message}
         </div>
@@ -508,10 +510,11 @@ const getAllChats = (chatId) => {
     
     `;
       } else {
-        userChatBox.innerHTML += ` <div class="flex mb-4">
-        <div class="bg-gray-200 p-4 rounded-tr-lg rounded-tl-lg rounded-br-lg">
+        userChatBox.innerHTML += `
+     <div class="flex mb-4">
+      <div class="bg-gray-200 p-4 rounded-tr-lg rounded-tl-lg rounded-br-lg">
         ${messages[i].message}
-        </div>
+      </div>
     </div>`;
       }
     }
