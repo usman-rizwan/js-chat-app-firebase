@@ -49,6 +49,7 @@ let selectedUserName = document.getElementById("selected-user-name");
 let selectedUserEmail = document.getElementById("selected-user-email");
 let selectedUserImage = document.getElementById("selected-user-image");
 let userChatBox = document.getElementById("user-chat-box");
+const fileInput = document.getElementById("file_input");
 
 // console.log(userEmail.value, userName.value, userPassword.value);
 
@@ -105,7 +106,26 @@ const signUp = () => {
       title:
         "Password must be greater than 6 charachters and must contains alphabets and number",
     });
-  } else {
+  }else if (!fileInput.files.length) {
+    // console.log("Pass Format Not Correct");
+    const Toast = Swal.mixin({
+      toast: true,
+      position: "top-end",
+      showConfirmButton: false,
+      timer: 3000,
+      timerProgressBar: true,
+      didOpen: (toast) => {
+        toast.onmouseenter = Swal.stopTimer;
+        toast.onmouseleave = Swal.resumeTimer;
+      },
+    });
+    Toast.fire({
+      icon: "error",
+      title:
+        "Please upload image",
+    });
+  } 
+  else {
     loader.classList.toggle("hidden");
     signupBtn.disabled = true;
 
@@ -168,7 +188,6 @@ let uploadFile = (file) => {
 };
 
 const uploadImage = async () => {
-  const fileInput = document.getElementById("file_input");
   const url = await uploadFile(fileInput.files[0]);
   console.log("url -->", url);
   return url;
